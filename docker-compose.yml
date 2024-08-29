@@ -1,0 +1,11 @@
+services:
+  users:
+    build:
+      dockerfile: Dockerfile
+      context: users
+    container_name: users
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/users/node_modules
