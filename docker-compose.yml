@@ -6,6 +6,9 @@ services:
     container_name: users
     ports:
       - "3001:3001"
+    restart: always
+    depends_on:
+      - "mongo"
     volumes:
       - ./users:/app/users
       - /app/users/node_modules
@@ -18,3 +21,14 @@ services:
       - users
     ports:
       - 80:80
+
+  mongo:
+    image: mvertes/alpine-mongo
+    ports:
+      - "27017:27017"
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

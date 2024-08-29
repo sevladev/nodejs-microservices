@@ -1,9 +1,15 @@
-import express from "express";
+import "./infra/env";
 
-const app = express();
+import { App } from "./infra/app";
+import { Application } from "express";
 
-app.get("/users", (req, res) => {
-  return res.json({ ok: true });
-});
+new App()
+  .setup()
+  .then((app: Application) => {
+    const PORT = process.env.PORT;
 
-app.listen(3001, () => console.log("users service on port 3001"));
+    app.listen(PORT, () => {
+      console.log("app on ");
+    });
+  })
+  .catch(console.warn);
