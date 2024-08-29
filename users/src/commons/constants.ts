@@ -21,3 +21,9 @@ export const ERRORS = {
     },
   },
 };
+
+export type ENVIROMENTS = "test" | "dev" | "prod";
+
+export type ProjectionType<T> = {
+  [K in keyof T]?: 0 | 1;
+};

@@ -1,7 +1,7 @@
 import { Application, Router } from "express";
 import { Db } from "mongodb";
-import { CreateUserController } from "./controllers/create-user-controller";
-import { schemaValidator } from "./middlewares/schema-validator";
+import { CreateUserController } from "../controllers/create-user-controller";
+import { schemaValidator } from "../middlewares/schema-validator";
 
 export class UserRoutes {
   static setup(app: Application, db: Db) {
