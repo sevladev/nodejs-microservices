@@ -28,4 +28,5 @@ export class MongoDb {
 
 export const collections = {
   users: "users",
+  users_tokens: "users_tokens",
 };

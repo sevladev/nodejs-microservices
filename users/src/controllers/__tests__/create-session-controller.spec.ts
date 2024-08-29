@@ -55,6 +55,7 @@ describe("create-session-controller", () => {
     expect(result.body.r).toBe(true);
     expect(result.body.result).toHaveProperty("user");
     expect(result.body.result).toHaveProperty("token");
+    expect(result.body.result).toHaveProperty("refresh_token");
     expect(result.body.result.user.password).toBe(null);
     expect(result.body.result.user).toHaveProperty("_id");
     expect(result.body.result.user).toHaveProperty("name");

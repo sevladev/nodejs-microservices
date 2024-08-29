@@ -4,16 +4,22 @@ import { CreateUserController } from "../controllers/create-user-controller";
 import { schemaValidator } from "../middlewares/schema-validator";
 import { CreateSessionController } from "../controllers/create-session-controller";
 import { getUserRepositories } from "../repositories/user-repository/user-repository";
+import { getUserTokenRepositories } from "../repositories/user-token-repository/user-token-repository";
 
 export class UserRoutes {
   static setup(app: Application, db: Db) {
     const router = Router();
 
     const userRepository = getUserRepositories(db);
+    const userTokenRepository = getUserTokenRepositories(db);
 
-    const { handle: createUser } = new CreateUserController(userRepository);
+    const { handle: createUser } = new CreateUserController(
+      userRepository,
+      userTokenRepository
+    );
     const { handle: createSession } = new CreateSessionController(
-      userRepository
+      userRepository,
+      userTokenRepository
     );
 
     router.post("/", schemaValidator(createUser.schema), createUser.fn);

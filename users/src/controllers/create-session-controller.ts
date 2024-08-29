@@ -4,9 +4,13 @@ import { CreateSessionCommand as Command } from "../commands/create-session-comm
 import Joi from "joi";
 import BaseController, { IControllerMethodType } from "./base-controller";
 import { IUserRepository } from "../repositories/user-repository/user-repository-types";
+import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 
 export class CreateSessionController extends BaseController {
-  constructor(private userRepository: IUserRepository) {
+  constructor(
+    private userRepository: IUserRepository,
+    private userTokenRepository: IUserTokenRepository
+  ) {
     super();
   }
 
@@ -32,7 +36,10 @@ export class CreateSessionController extends BaseController {
         try {
           const { password, email } = req.body;
 
-          const command = new Command(this.userRepository);
+          const command = new Command(
+            this.userRepository,
+            this.userTokenRepository
+          );
 
           const result = await command.execute({
             email,

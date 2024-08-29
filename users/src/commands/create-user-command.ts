@@ -2,6 +2,11 @@ import { BaseCommand } from "./base-command";
 import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 import { UserEntity } from "../entities/user-entity";
 import { hash } from "bcryptjs";
+import { jwtConfig } from "../config/jwt";
+import { sign } from "jsonwebtoken";
+import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
+import { UserTokenEntity } from "../entities/user-token-entity";
+import moment from "moment";
 
 interface Request {
   email: string;
@@ -11,7 +16,10 @@ interface Request {
 }
 
 export class CreateUserCommand extends BaseCommand {
-  constructor(private userRepository: IUserRepository) {
+  constructor(
+    private userRepository: IUserRepository,
+    private userTokenRepository: IUserTokenRepository
+  ) {
     super();
   }
 
@@ -35,7 +43,24 @@ export class CreateUserCommand extends BaseCommand {
 
       await this.userRepository.create(user);
 
-      return { ...user, password: null };
+      const token = sign(
+        { _id: String(user._id) },
+        process.env.PRIVATE_KEY as string,
+        { expiresIn: jwtConfig.expiresIn }
+      );
+
+      const refresh_token = new UserTokenEntity({
+        expires_at: moment().add(7, "days").unix(),
+        user_id: user._id,
+      });
+
+      await this.userTokenRepository.createOrUpdate(refresh_token);
+
+      return {
+        user: { ...user, password: null },
+        token,
+        refresh_token: refresh_token._id,
+      };
     } catch (error) {
       return this.handleException(error);
     }

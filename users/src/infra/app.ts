@@ -5,6 +5,7 @@ import { MongoDb } from "./mongo-db";
 import cors from "cors";
 import helmet from "helmet";
 import { UserRoutes } from "../infra/routes";
+import { createIndexes } from "../seeds/create-indexes";
 
 export class App {
   app: Application;
@@ -22,14 +23,14 @@ export class App {
     this.app.use(cors());
     this.app.use(helmet());
     this.app.use(express.json());
-
-    this.app.get("/users", (req, res) => {
-      return res.json({ ok: true });
-    });
   }
 
   module(database: Db): void {
     UserRoutes.setup(this.app, database);
+  }
+
+  async pre(db: Db) {
+    await createIndexes(db);
   }
 
   async setup(): Promise<Application> {
@@ -43,6 +44,7 @@ export class App {
 
     this.middlewares();
     this.module(mongoDb);
+    await this.pre(mongoDb);
 
     return this.app;
   }

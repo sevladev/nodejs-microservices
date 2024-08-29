@@ -102,8 +102,10 @@ describe("create-user-controller", () => {
     });
 
     expect(result.body.r).toBe(true);
-    expect(result.body.result.password).toBe(null);
-    expect(result.body.result).toHaveProperty("email");
+    expect(result.body.result.user.password).toBe(null);
+    expect(result.body.result).toHaveProperty("user");
+    expect(result.body.result).toHaveProperty("token");
+    expect(result.body.result).toHaveProperty("refresh_token");
   });
 
   it("should be not able to create a user with existent email", async () => {

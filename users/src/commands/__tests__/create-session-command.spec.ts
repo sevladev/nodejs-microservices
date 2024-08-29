@@ -2,10 +2,13 @@ import "../../infra/env";
 
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
 import { IUserRepository } from "../../repositories/user-repository/user-repository-types";
+import { UserTokenRepositoryInMemory } from "../../repositories/user-token-repository/user-token-repository-in-memory";
+import { IUserTokenRepository } from "../../repositories/user-token-repository/user-token-repository-types";
 import { CreateSessionCommand } from "../create-session-command";
 import { CreateUserCommand } from "../create-user-command";
 describe("create-session-command", () => {
   let userRepository: IUserRepository;
+  let userTokenRepository: IUserTokenRepository;
   let createSessionCommand: CreateSessionCommand;
   let createUserCommand: CreateUserCommand;
 
@@ -18,8 +21,15 @@ describe("create-session-command", () => {
 
   beforeAll(async () => {
     userRepository = new UserRepositoryInMemory();
-    createSessionCommand = new CreateSessionCommand(userRepository);
-    createUserCommand = new CreateUserCommand(userRepository);
+    userTokenRepository = new UserTokenRepositoryInMemory();
+    createSessionCommand = new CreateSessionCommand(
+      userRepository,
+      userTokenRepository
+    );
+    createUserCommand = new CreateUserCommand(
+      userRepository,
+      userTokenRepository
+    );
 
     await createUserCommand.execute(user);
   });
@@ -34,6 +44,7 @@ describe("create-session-command", () => {
 
     expect(result).toHaveProperty("user");
     expect(result).toHaveProperty("token");
+    expect(result).toHaveProperty("refresh_token");
   });
 
   it("should be not able to create a new session with nonexistent email", async () => {
@@ -56,5 +67,10 @@ describe("create-session-command", () => {
     const result = await createSessionCommand.execute(request);
 
     expect(result).toBe(false);
+  });
+
+  it("should be not able to have more one token per user", async () => {
+    const length = await userTokenRepository.countAll();
+    expect(length).toBe(1);
   });
 });

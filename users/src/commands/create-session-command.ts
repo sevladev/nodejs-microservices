@@ -3,6 +3,9 @@ import { IUserRepository } from "../repositories/user-repository/user-repository
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { jwtConfig } from "../config/jwt";
+import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
+import { UserTokenEntity } from "../entities/user-token-entity";
+import moment from "moment";
 
 interface Request {
   email: string;
@@ -10,7 +13,10 @@ interface Request {
 }
 
 export class CreateSessionCommand extends BaseCommand {
-  constructor(private userRepository: IUserRepository) {
+  constructor(
+    private userRepository: IUserRepository,
+    private userTokenRepository: IUserTokenRepository
+  ) {
     super();
   }
 
@@ -34,8 +40,16 @@ export class CreateSessionCommand extends BaseCommand {
         { expiresIn: jwtConfig.expiresIn }
       );
 
+      const refresh_token = new UserTokenEntity({
+        expires_at: moment().add(7, "days").unix(),
+        user_id: user._id,
+      });
+
+      await this.userTokenRepository.createOrUpdate(refresh_token);
+
       return {
         token,
+        refresh_token: refresh_token._id,
         user: {
           ...user,
           password: null,
