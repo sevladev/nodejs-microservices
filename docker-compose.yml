@@ -2,10 +2,19 @@ services:
   users:
     build:
       dockerfile: Dockerfile
-      context: users
+      context: ./users
     container_name: users
     ports:
       - "3001:3001"
     volumes:
-      - .:/app
+      - ./users:/app/users
       - /app/users/node_modules
+
+  proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - users
+    ports:
+      - 80:80
