@@ -3,21 +3,21 @@ export const ERRORS = {
     code: 401,
     json: {
       r: false,
-      errors: ["Invalid token, auth again."],
+      error: "Invalid token, auth again.",
     },
   },
   FORBIDDEN: {
     code: 403,
     json: {
       r: false,
-      errors: ["Forbidden."],
+      error: "Forbidden.",
     },
   },
   EXPIRED_TOKEN: {
     code: 401,
     json: {
       r: false,
-      errors: ["Expired Token, auth again."],
+      error: "Expired token, auth again.",
     },
   },
 };
@@ -26,4 +26,9 @@ export type ENVIROMENTS = "test" | "dev" | "prod";
 
 export type ProjectionType<T> = {
   [K in keyof T]?: 0 | 1;
+};
+
+export const ROLES_TYPES = {
+  USER: "resu",
+  ROOT: "toor",
 };

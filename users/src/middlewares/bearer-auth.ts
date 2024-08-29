@@ -1,28 +1,31 @@
 import { NextFunction, Request, Response } from "express";
 
 import { verify } from "jsonwebtoken";
-import { Db, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { IAuthType, IRolesTypes } from "../controllers/base-controller";
 import { ERRORS } from "../commons/constants";
-import { collections } from "../infra/mongo-db";
+import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 
 export type IDecodedTokenType = {
   _id: string;
   role: IRolesTypes;
 };
 
-declare module "express" {
-  interface Request {
-    user?: {
-      _id: string;
-    };
+declare global {
+  namespace Express {
+    export interface Request {
+      user: {
+        _id: string;
+      };
+    }
   }
 }
 
-export const ensureAuthentication = (auth: IAuthType, db: Db) => {
+export const ensureAuthentication = (
+  auth: IAuthType,
+  userRepository: IUserRepository
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const collection = db.collection(collections.users);
-
     const { roles } = auth;
 
     if (!roles.length) return next();
@@ -42,10 +45,10 @@ export const ensureAuthentication = (auth: IAuthType, db: Db) => {
 
       const { _id } = decoded as IDecodedTokenType;
 
-      const getUser = await collection.findOne(
-        { _id: new ObjectId(_id) },
-        { projection: { is_active: 1, role: 1 } }
-      );
+      const getUser = await userRepository.findById(new ObjectId(_id), {
+        role: 1,
+        is_active: 1,
+      });
 
       if (!getUser) {
         return res
@@ -57,7 +60,7 @@ export const ensureAuthentication = (auth: IAuthType, db: Db) => {
         return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
-      if (!roles.includes(getUser.role)) {
+      if (!roles.includes(getUser.role as string)) {
         return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
@@ -67,9 +70,7 @@ export const ensureAuthentication = (auth: IAuthType, db: Db) => {
 
       next();
     } catch (error) {
-      return res
-        .status(ERRORS.EXPIRED_TOKEN.code)
-        .json(ERRORS.EXPIRED_TOKEN.json);
+      return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
     }
   };
 };

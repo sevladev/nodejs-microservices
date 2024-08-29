@@ -7,6 +7,7 @@ import { sign } from "jsonwebtoken";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 import { UserTokenEntity } from "../entities/user-token-entity";
 import moment from "moment";
+import { ObjectId } from "mongodb";
 
 interface Request {
   email: string;

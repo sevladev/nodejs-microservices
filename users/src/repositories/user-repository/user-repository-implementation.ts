@@ -1,4 +1,4 @@
-import { Collection, Db } from "mongodb";
+import { Collection, Db, ObjectId } from "mongodb";
 import { IUserRepository } from "./user-repository-types";
 import { collections } from "../../infra/mongo-db";
 import { UserEntity } from "../../entities/user-entity";
@@ -31,6 +31,21 @@ export class UserRepositoryImplementation implements IUserRepository {
         { projection }
       );
 
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findById(
+    _id: ObjectId,
+    projection?: ProjectionType<UserEntity>
+  ): Promise<UserEntity | undefined | null> {
+    try {
+      const result = await this.usersDb.findOne<UserEntity>(
+        { _id },
+        { projection }
+      );
       return result;
     } catch (error) {
       throw error;
