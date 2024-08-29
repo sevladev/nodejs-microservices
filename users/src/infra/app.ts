@@ -4,7 +4,7 @@ import { Db } from "mongodb";
 import { MongoDb } from "./mongo-db";
 import cors from "cors";
 import helmet from "helmet";
-import { UserRoutes } from "../routes";
+import { UserRoutes } from "../infra/routes";
 
 export class App {
   app: Application;
