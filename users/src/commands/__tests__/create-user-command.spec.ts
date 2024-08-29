@@ -1,4 +1,5 @@
-import { UserEntity } from "../../entities/user-entity";
+import "../../infra/env";
+
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
 import { IUserRepository } from "../../repositories/user-repository/user-repository-types";
 import { CreateUserCommand } from "../create-user-command";

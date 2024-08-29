@@ -18,10 +18,7 @@ export class CreateUserCommand extends BaseCommand {
   async execute({ email, name, password, phone }: Request) {
     try {
       const checkIfEmailAlreadyRegistered =
-        await this.userRepository.findByEmail(email.toLowerCase(), {
-          _id: 1,
-          password: 1,
-        });
+        await this.userRepository.findByEmail(email.toLowerCase());
 
       if (checkIfEmailAlreadyRegistered) {
         return this.addError("email already registered");
