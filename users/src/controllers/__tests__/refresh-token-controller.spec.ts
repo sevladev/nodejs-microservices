@@ -4,7 +4,6 @@ import request from "supertest";
 import { ObjectId } from "mongodb";
 import { IUserTokenRepository } from "../../repositories/user-token-repository/user-token-repository-types";
 import { UserTokenRepositoryInMemory } from "../../repositories/user-token-repository/user-token-repository-in-memory";
-import { UserTokenEntity } from "../../entities/user-token-entity";
 import moment from "moment";
 
 describe("refresh-token-controller", () => {
