@@ -33,7 +33,13 @@ export class App {
   }
 
   async setup(): Promise<Application> {
-    const mongoDb = await this.database();
+    let mongoDb: Db;
+
+    if (process.env.NODE_ENV !== "test") {
+      mongoDb = await this.database();
+    } else {
+      mongoDb = null as any;
+    }
 
     this.middlewares();
     this.module(mongoDb);

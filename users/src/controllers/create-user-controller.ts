@@ -2,13 +2,11 @@ import { Request, Response } from "express";
 
 import { CreateUserCommand as Command } from "../commands/create-user-command";
 import Joi from "joi";
-import { Db } from "mongodb";
 import BaseController, { IControllerMethodType } from "./base-controller";
-import { userRepositories } from "../repositories/user-repository/user-repository";
-import { ENVIROMENTS } from "../commons/constants";
+import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 
 export class CreateUserController extends BaseController {
-  constructor(private db: Db) {
+  constructor(private userRepository: IUserRepository) {
     super();
   }
 
@@ -51,11 +49,7 @@ export class CreateUserController extends BaseController {
         try {
           const { password, name, email, phone } = req.body;
 
-          const userRepository = new userRepositories[
-            process.env.NODE_ENV as ENVIROMENTS
-          ](this.db);
-
-          const command = new Command(userRepository);
+          const command = new Command(this.userRepository);
 
           const result = await command.execute({
             name,

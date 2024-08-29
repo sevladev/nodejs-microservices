@@ -1,6 +1,5 @@
 import "../../infra/env";
 
-import { UserEntity } from "../../entities/user-entity";
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
 import { IUserRepository } from "../../repositories/user-repository/user-repository-types";
 import { CreateSessionCommand } from "../create-session-command";
@@ -9,7 +8,6 @@ describe("create-session-command", () => {
   let userRepository: IUserRepository;
   let createSessionCommand: CreateSessionCommand;
   let createUserCommand: CreateUserCommand;
-  let db = null as any;
 
   const user = {
     email: "test@example.com",
@@ -19,7 +17,7 @@ describe("create-session-command", () => {
   };
 
   beforeAll(async () => {
-    userRepository = new UserRepositoryInMemory(db);
+    userRepository = new UserRepositoryInMemory();
     createSessionCommand = new CreateSessionCommand(userRepository);
     createUserCommand = new CreateUserCommand(userRepository);
 

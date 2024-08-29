@@ -6,10 +6,9 @@ import { CreateUserCommand } from "../create-user-command";
 describe("create-user-command", () => {
   let userRepository: IUserRepository;
   let createUserCommand: CreateUserCommand;
-  let db = null as any;
 
   beforeAll(() => {
-    userRepository = new UserRepositoryInMemory(db);
+    userRepository = new UserRepositoryInMemory();
     createUserCommand = new CreateUserCommand(userRepository);
   });
 
