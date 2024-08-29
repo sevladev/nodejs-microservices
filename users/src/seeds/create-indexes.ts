@@ -9,8 +9,5 @@ export const createIndexes = async (db: Db) => {
     await db
       .collection(collections.users_tokens)
       .createIndex({ user_id: 1 }, { unique: true });
-    await db
-      .collection(collections.users_tokens)
-      .createIndex({ refresh_token: 1 });
   } catch (error) {}
 };

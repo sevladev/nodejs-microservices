@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "rm -rf dist && npm run build && node ./dist",
     "dev": "ts-node-dev --respawn --transpile-only src",
-    "test": "NODE_ENV=test PRIVATE_KEY=test jest --watch"
+    "test": "NODE_ENV=test PRIVATE_KEY=test jest --watch --runInBand"
   },
   "keywords": [],
   "author": "",

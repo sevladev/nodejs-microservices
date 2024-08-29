@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import "../../infra/env";
 
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
