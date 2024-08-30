@@ -14,9 +14,20 @@ datasource db {
 }
 
 model Places {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   description String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  placeTypeId String
+  placeType   PlacesType @relation(fields: [placeTypeId], references: [id])
+}
+
+model PlacesType {
+  id         String   @id @default(uuid())
+  name       String
+  slug       String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  Places     Places[]
 }
