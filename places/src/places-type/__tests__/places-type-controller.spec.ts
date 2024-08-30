@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { PlacesTypeService } from '../places-type.service';
 import { PlacesTypeRepositoryInMemory } from '../places-type-repository-in-memory';
 import { PlacesTypeModule } from '../places-type.module';
+import { PrismaService } from '../../prisma/prisma.service';
 
 describe('places-type-controller', () => {
   let app: INestApplication;
@@ -15,6 +16,13 @@ describe('places-type-controller', () => {
     })
       .overrideProvider('PlacesTypeRepository')
       .useClass(PlacesTypeRepositoryInMemory)
+      .overrideProvider(PrismaService)
+      .useValue({
+        placeType: {
+          findUnique: jest.fn(),
+          create: jest.fn(),
+        },
+      })
       .compile();
 
     app = moduleFixture.createNestApplication();

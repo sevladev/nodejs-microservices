@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { IPlacesTypeRepository } from './dtos/places-type-repository';
-import { UTILS } from '../../src/commons/constants';
 import { createPlacesTypeDTO } from './dtos/create-places-type';
 import { PlacesTypeEntity } from './places-type.entity';
+import { UTILS } from '../commons/constants';
 
 @Injectable()
 export class PlacesTypeService {
