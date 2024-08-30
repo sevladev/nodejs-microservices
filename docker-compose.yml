@@ -58,6 +58,15 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: always
 
+  redis:
+    image: redis:6
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   mongo-data:
   postgres-data:
+  redis-data:

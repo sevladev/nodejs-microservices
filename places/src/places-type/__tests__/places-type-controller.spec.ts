@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { PlacesTypeService } from '../places-type.service';
 import { PlacesTypeRepositoryInMemory } from '../places-type-repository-in-memory';
 import { PlacesTypeModule } from '../places-type.module';
