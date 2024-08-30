@@ -1,11 +1,14 @@
 import "../../infra/env";
-
+import { RedisProvider } from "../../providers/redis/redis-provider";
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
 import { IUserRepository } from "../../repositories/user-repository/user-repository-types";
 import { UserTokenRepositoryInMemory } from "../../repositories/user-token-repository/user-token-repository-in-memory";
 import { IUserTokenRepository } from "../../repositories/user-token-repository/user-token-repository-types";
 import { CreateSessionCommand } from "../create-session-command";
 import { CreateUserCommand } from "../create-user-command";
+
+jest.mock("../../providers/redis/redis-provider");
+
 describe("create-session-command", () => {
   let userRepository: IUserRepository;
   let userTokenRepository: IUserTokenRepository;
@@ -22,6 +25,10 @@ describe("create-session-command", () => {
   beforeAll(async () => {
     userRepository = new UserRepositoryInMemory();
     userTokenRepository = new UserTokenRepositoryInMemory();
+
+    const mockSet = jest.fn().mockResolvedValue(undefined);
+    RedisProvider.prototype.set = mockSet;
+
     createSessionCommand = new CreateSessionCommand(
       userRepository,
       userTokenRepository

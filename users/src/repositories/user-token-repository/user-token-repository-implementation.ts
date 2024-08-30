@@ -13,9 +13,11 @@ export class UserTokenRepositoryImplementation implements IUserTokenRepository {
 
   async createOrUpdate(payload: UserTokenEntity): Promise<void> {
     try {
+      const { _id, ...rest } = payload;
+
       await this.usersTokensDb.updateOne(
         { user_id: payload.user_id },
-        { $set: payload },
+        { $set: rest },
         { upsert: true }
       );
     } catch (error) {
