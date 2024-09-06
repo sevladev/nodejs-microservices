@@ -21,7 +21,9 @@ export class PlacesTypeService {
         return {
           r: false,
           status_code: HttpStatus.CONFLICT,
-          data: 'Place type already registered',
+          data: {
+            error: 'Place type already registered',
+          },
         };
       }
 
@@ -35,7 +37,9 @@ export class PlacesTypeService {
       return {
         r: true,
         status_code: HttpStatus.CREATED,
-        data: placeType,
+        data: {
+          result: placeType,
+        },
       };
     } catch (error) {
       throw new HttpException(

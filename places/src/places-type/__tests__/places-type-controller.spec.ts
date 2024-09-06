@@ -37,7 +37,7 @@ describe('places-type-controller', () => {
 
   it('should be able to create a new place type', async () => {
     const response = await request(app.getHttpServer())
-      .post('/places-type')
+      .post('/places/places-type')
       .send({ name: 'Beach' });
 
     expect(response.statusCode).toBe(201);
@@ -47,11 +47,11 @@ describe('places-type-controller', () => {
 
   it('should be not able to create a existent place type', async () => {
     const response = await request(app.getHttpServer())
-      .post('/places-type')
+      .post('/places/places-type')
       .send({ name: 'Beach' });
 
     expect(response.statusCode).toBe(409);
     expect(response.body.r).toBe(false);
-    expect(response.body.result).toBe('Place type already registered');
+    expect(response.body.error).toBe('Place type already registered');
   });
 });

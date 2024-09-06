@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { Response } from 'express';
 import { ZodValidationPipe } from '../middlewares/schema.middleware';
 
-@Controller('places-type')
+@Controller('/places/places-type')
 export class PlacesTypeController {
   constructor(private placesTypeService: PlacesTypeService) {}
   @Post()
@@ -20,7 +20,7 @@ export class PlacesTypeController {
 
     return res.status(result.status_code).json({
       r: result.r,
-      result: result.data,
+      ...result.data,
     });
   }
 }

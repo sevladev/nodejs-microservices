@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -14,20 +15,20 @@ datasource db {
 }
 
 model Places {
-  id            String   @id @default(uuid())
+  id            String @id @default(uuid())
   name          String
   description   String
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(now())
+  created_at    Int
+  updated_at    Int
   place_type_id String
 }
 
 model PlacesType {
-  id         String   @id @default(uuid())
+  id         String @id @default(uuid())
   name       String
   slug       String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  created_at Int
+  updated_at Int
 
   @@index([slug])
 }

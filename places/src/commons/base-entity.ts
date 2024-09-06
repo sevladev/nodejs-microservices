@@ -1,15 +1,16 @@
 import { randomUUID } from 'crypto';
+import moment from 'moment';
 
 export class BaseEntity {
-  created_at: Date;
+  created_at: number;
 
-  updated_at: Date;
+  updated_at: number;
 
   id: string;
 
   constructor() {
     this.id = randomUUID();
-    this.created_at = new Date();
-    this.updated_at = new Date();
+    this.created_at = moment().unix();
+    this.updated_at = moment().unix();
   }
 }

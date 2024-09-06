@@ -6,6 +6,8 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '../redis/redis.service';
+import { CustomError } from '../errors/custom-error';
+import { ERRORS } from '../commons/constants';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -22,13 +24,17 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     if (!authHeader) {
-      throw new UnauthorizedException('No token provided');
+      return res
+        .status(ERRORS.UNAUTHORIZED.code)
+        .json(ERRORS.UNAUTHORIZED.json);
     }
 
     const token = authHeader.split(' ')[1];
 
     if (!token) {
-      throw new UnauthorizedException('Invalid token format');
+      return res
+        .status(ERRORS.UNAUTHORIZED.code)
+        .json(ERRORS.UNAUTHORIZED.json);
     }
 
     try {
@@ -40,13 +46,19 @@ export class AuthMiddleware implements NestMiddleware {
         `auth-token-${payload._id}`,
       );
 
-      if (storedToken !== token) {
-        throw new UnauthorizedException('Invalid token');
+      if (!storedToken) {
+        return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
+      }
+
+      const storedTokenPayload = JSON.parse(storedToken);
+
+      if (storedTokenPayload.token !== token) {
+        return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
       return next();
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+      return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
     }
   }
 }

@@ -23,7 +23,7 @@ describe('places-type-service', () => {
     const result = await placesTypeService.create({ name: 'Beach' });
     expect(result.r).toBe(true);
     expect(result.status_code).toBe(201);
-    expect(result.data).toHaveProperty('slug');
+    expect(result.data.result).toHaveProperty('slug');
   });
 
   it('should be not able to create a existent place type', async () => {
@@ -31,6 +31,6 @@ describe('places-type-service', () => {
     const result = await placesTypeService.create({ name: 'place type' });
     expect(result.r).toBe(false);
     expect(result.status_code).toBe(409);
-    expect(result.data).toBe('Place type already registered');
+    expect(result.data.error).toBe('Place type already registered');
   });
 });

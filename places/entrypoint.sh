@@ -5,4 +5,4 @@ until npx prisma migrate deploy; do
     sleep 2
 done
 
-npm start
+npm run start:dev
