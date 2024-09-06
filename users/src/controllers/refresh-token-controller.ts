@@ -5,9 +5,13 @@ import BaseController, { IControllerMethodType } from "./base-controller";
 import { ROLES_TYPES } from "../commons/constants";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 import Joi from "joi";
+import { IRedisProvider } from "../providers/redis/redis-types";
 
 export class RefreshTokenController extends BaseController {
-  constructor(private userTokenRepository: IUserTokenRepository) {
+  constructor(
+    private userTokenRepository: IUserTokenRepository,
+    private redisProvider: IRedisProvider
+  ) {
     super();
   }
 
@@ -34,7 +38,10 @@ export class RefreshTokenController extends BaseController {
           const { refresh_token } = req.params;
           const requester_id = req.user._id;
 
-          const command = new Command(this.userTokenRepository);
+          const command = new Command(
+            this.userTokenRepository,
+            this.redisProvider
+          );
 
           const result = await command.execute({
             requester_id,

@@ -31,7 +31,8 @@ export class UserRoutes {
     );
     const { handle: userGetMe } = new UserGetMeController(userRepository);
     const { handle: refreshToken } = new RefreshTokenController(
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
 
     router.post("/", schemaValidator(createUser.schema), createUser.fn);

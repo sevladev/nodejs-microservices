@@ -36,7 +36,10 @@ describe("refresh-token-command", () => {
     userRepository = new UserRepositoryInMemory();
     userTokenRepository = new UserTokenRepositoryInMemory();
     redisProvider = new RedisProvider();
-    refreshTokenCommand = new RefreshTokenCommand(userTokenRepository);
+    refreshTokenCommand = new RefreshTokenCommand(
+      userTokenRepository,
+      redisProvider
+    );
     createUserCommand = new CreateUserCommand(
       userRepository,
       userTokenRepository,

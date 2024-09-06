@@ -1,4 +1,5 @@
 import { Redis } from "ioredis";
+import { IRedisProvider } from "./redis-types";
 
 export class RedisProvider implements IRedisProvider {
   client: Redis;

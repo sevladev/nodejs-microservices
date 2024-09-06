@@ -5,6 +5,7 @@ import { UserTokenEntity } from "../entities/user-token-entity";
 import moment from "moment";
 import { ObjectId } from "mongodb";
 import { sign } from "jsonwebtoken";
+import { IRedisProvider } from "../providers/redis/redis-types";
 
 interface Request {
   refresh_token: string;
@@ -12,7 +13,10 @@ interface Request {
 }
 
 export class RefreshTokenCommand extends BaseCommand {
-  constructor(private userTokenRepository: IUserTokenRepository) {
+  constructor(
+    private userTokenRepository: IUserTokenRepository,
+    private redisProvider: IRedisProvider
+  ) {
     super();
   }
 
@@ -49,6 +53,12 @@ export class RefreshTokenCommand extends BaseCommand {
       });
 
       await this.userTokenRepository.createOrUpdate(new_refresh_token);
+
+      await this.redisProvider.set(
+        `auth-token-${requester_id}`,
+        new_token,
+        3600
+      );
 
       return {
         token: new_token,
