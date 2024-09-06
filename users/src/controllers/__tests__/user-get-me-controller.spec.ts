@@ -2,6 +2,17 @@ import { Application } from "express";
 import { App } from "../../infra/app";
 import request from "supertest";
 
+jest.mock("../../providers/redis/redis-provider", () => {
+  return {
+    RedisProvider: jest.fn().mockImplementation(() => {
+      return {
+        set: jest.fn().mockResolvedValue(undefined),
+        del: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
+  };
+});
+
 describe("user-get-me-controller", () => {
   let app: Application;
   let token: string;

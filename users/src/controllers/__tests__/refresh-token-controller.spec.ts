@@ -6,6 +6,17 @@ import { IUserTokenRepository } from "../../repositories/user-token-repository/u
 import { UserTokenRepositoryInMemory } from "../../repositories/user-token-repository/user-token-repository-in-memory";
 import moment from "moment";
 
+jest.mock("../../providers/redis/redis-provider", () => {
+  return {
+    RedisProvider: jest.fn().mockImplementation(() => {
+      return {
+        set: jest.fn().mockResolvedValue(undefined),
+        del: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
+  };
+});
+
 describe("refresh-token-controller", () => {
   let app: Application;
   let userTokenRepository: IUserTokenRepository;

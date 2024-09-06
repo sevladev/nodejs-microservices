@@ -21,7 +21,8 @@ export class UserRoutes {
 
     const { handle: createUser } = new CreateUserController(
       userRepository,
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
     const { handle: createSession } = new CreateSessionController(
       userRepository,

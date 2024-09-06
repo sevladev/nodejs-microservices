@@ -5,11 +5,13 @@ import Joi from "joi";
 import BaseController, { IControllerMethodType } from "./base-controller";
 import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
+import { IRedisProvider } from "../providers/redis/redis-types";
 
 export class CreateUserController extends BaseController {
   constructor(
     private userRepository: IUserRepository,
-    private userTokenRepository: IUserTokenRepository
+    private userTokenRepository: IUserTokenRepository,
+    private redisProvider: IRedisProvider
   ) {
     super();
   }
@@ -55,7 +57,8 @@ export class CreateUserController extends BaseController {
 
           const command = new Command(
             this.userRepository,
-            this.userTokenRepository
+            this.userTokenRepository,
+            this.redisProvider
           );
 
           const result = await command.execute({

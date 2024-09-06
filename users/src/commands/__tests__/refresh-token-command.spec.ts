@@ -10,9 +10,15 @@ import { CreateUserCommand } from "../create-user-command";
 import { RefreshTokenCommand } from "../refresh-token-command";
 import { UserTokenEntity } from "../../entities/user-token-entity";
 import moment from "moment";
+import { IRedisProvider } from "../../providers/redis/redis-types";
+import { RedisProvider } from "../../providers/redis/redis-provider";
+
+jest.mock("../../providers/redis/redis-provider");
+
 describe("refresh-token-command", () => {
   let userRepository: IUserRepository;
   let userTokenRepository: IUserTokenRepository;
+  let redisProvider: IRedisProvider;
   let createUserCommand: CreateUserCommand;
   let refreshTokenCommand: RefreshTokenCommand;
 
@@ -24,12 +30,17 @@ describe("refresh-token-command", () => {
   };
 
   beforeAll(async () => {
+    const mockSet = jest.fn().mockResolvedValue(undefined);
+    RedisProvider.prototype.set = mockSet;
+
     userRepository = new UserRepositoryInMemory();
     userTokenRepository = new UserTokenRepositoryInMemory();
+    redisProvider = new RedisProvider();
     refreshTokenCommand = new RefreshTokenCommand(userTokenRepository);
     createUserCommand = new CreateUserCommand(
       userRepository,
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
   });
 

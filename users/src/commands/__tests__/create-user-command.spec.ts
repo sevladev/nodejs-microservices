@@ -1,21 +1,31 @@
 import "../../infra/env";
-
+import { RedisProvider } from "../../providers/redis/redis-provider";
+import { IRedisProvider } from "../../providers/redis/redis-types";
 import { UserRepositoryInMemory } from "../../repositories/user-repository/user-repository-in-memory";
 import { IUserRepository } from "../../repositories/user-repository/user-repository-types";
 import { UserTokenRepositoryInMemory } from "../../repositories/user-token-repository/user-token-repository-in-memory";
 import { IUserTokenRepository } from "../../repositories/user-token-repository/user-token-repository-types";
 import { CreateUserCommand } from "../create-user-command";
+
+jest.mock("../../providers/redis/redis-provider");
+
 describe("create-user-command", () => {
   let userRepository: IUserRepository;
   let userTokenRepository: IUserTokenRepository;
+  let redisProvider: IRedisProvider;
   let createUserCommand: CreateUserCommand;
 
   beforeAll(() => {
+    const mockSet = jest.fn().mockResolvedValue(undefined);
+    RedisProvider.prototype.set = mockSet;
+
     userRepository = new UserRepositoryInMemory();
     userTokenRepository = new UserTokenRepositoryInMemory();
+    redisProvider = new RedisProvider();
     createUserCommand = new CreateUserCommand(
       userRepository,
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
   });
 

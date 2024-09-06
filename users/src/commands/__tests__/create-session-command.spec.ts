@@ -41,7 +41,8 @@ describe("create-session-command", () => {
 
     createUserCommand = new CreateUserCommand(
       userRepository,
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
 
     await createUserCommand.execute(user);
