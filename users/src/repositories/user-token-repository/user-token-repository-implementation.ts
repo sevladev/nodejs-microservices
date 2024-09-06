@@ -11,15 +11,26 @@ export class UserTokenRepositoryImplementation implements IUserTokenRepository {
     this.usersTokensDb = db.collection(collections.users_tokens);
   }
 
+  async findById(
+    _id: ObjectId,
+    projection?: ProjectionType<UserTokenEntity>
+  ): Promise<UserTokenEntity | undefined | null> {
+    try {
+      const result = await this.usersTokensDb.findOne<UserTokenEntity>(
+        { _id },
+        { projection }
+      );
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createOrUpdate(payload: UserTokenEntity): Promise<void> {
     try {
-      const { _id, ...rest } = payload;
-
-      await this.usersTokensDb.updateOne(
-        { user_id: payload.user_id },
-        { $set: rest },
-        { upsert: true }
-      );
+      await this.usersTokensDb.deleteOne({ user_id: payload.user_id });
+      await this.usersTokensDb.insertOne(payload);
     } catch (error) {
       throw error;
     }

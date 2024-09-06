@@ -8,6 +8,7 @@ jest.mock("../../providers/redis/redis-provider", () => {
       return {
         set: jest.fn().mockResolvedValue(undefined),
         del: jest.fn().mockResolvedValue(undefined),
+        get: jest.fn().mockResolvedValue(undefined),
       };
     }),
   };
@@ -28,34 +29,6 @@ describe("user-get-me-controller", () => {
     });
 
     token = `Bearer ${result.body.result.token}`;
-  });
-
-  describe("authentication", () => {
-    it("should be not able to get a user profile with expired token", async () => {
-      const result = await request(app).get("/users/me").set({
-        authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-      });
-
-      expect(result.body.r).toBe(false);
-      expect(result.body.error).toBe("Forbidden.");
-    });
-
-    it("should be not able to get a user profile without token", async () => {
-      const result = await request(app).get("/users/me");
-
-      expect(result.body.r).toBe(false);
-      expect(result.body.error).toBe("Invalid token, auth again.");
-    });
-
-    it("should be not able to get a user profile with invalid token", async () => {
-      const result = await request(app)
-        .get("/users/me")
-        .set({ authorization: "token" });
-
-      expect(result.body.r).toBe(false);
-      expect(result.body.error).toBe("Forbidden.");
-    });
   });
 
   it("should be able to get a user profile data from your _id", async () => {

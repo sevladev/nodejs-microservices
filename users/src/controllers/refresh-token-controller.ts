@@ -2,14 +2,15 @@ import { Request, Response } from "express";
 
 import { RefreshTokenCommand as Command } from "../commands/refresh-token-command";
 import BaseController, { IControllerMethodType } from "./base-controller";
-import { ROLES_TYPES } from "../commons/constants";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 import Joi from "joi";
 import { IRedisProvider } from "../providers/redis/redis-types";
+import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 
 export class RefreshTokenController extends BaseController {
   constructor(
     private userTokenRepository: IUserTokenRepository,
+    private userRepository: IUserRepository,
     private redisProvider: IRedisProvider
   ) {
     super();
@@ -18,7 +19,7 @@ export class RefreshTokenController extends BaseController {
   get handle(): IControllerMethodType {
     return {
       auth: {
-        roles: [ROLES_TYPES.USER, ROLES_TYPES.ROOT],
+        roles: [],
       },
       schema: {
         params: Joi.object({
@@ -36,15 +37,14 @@ export class RefreshTokenController extends BaseController {
       fn: async (req: Request, res: Response): Promise<unknown> => {
         try {
           const { refresh_token } = req.params;
-          const requester_id = req.user._id;
 
           const command = new Command(
             this.userTokenRepository,
+            this.userRepository,
             this.redisProvider
           );
 
           const result = await command.execute({
-            requester_id,
             refresh_token,
           });
 

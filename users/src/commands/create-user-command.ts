@@ -7,7 +7,6 @@ import { sign } from "jsonwebtoken";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 import { UserTokenEntity } from "../entities/user-token-entity";
 import moment from "moment";
-import { ObjectId } from "mongodb";
 import { IRedisProvider } from "../providers/redis/redis-types";
 
 interface Request {
@@ -59,7 +58,11 @@ export class CreateUserCommand extends BaseCommand {
 
       await this.userTokenRepository.createOrUpdate(refresh_token);
 
-      await this.redisProvider.set(`auth-token-${user._id}`, token, 3600);
+      await this.redisProvider.set(
+        `auth-token-${user._id}`,
+        JSON.stringify({ token, role: user.role, is_active: user.is_active }),
+        3600
+      );
 
       return {
         user: { ...user, password: null },

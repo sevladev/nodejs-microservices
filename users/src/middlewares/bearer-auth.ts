@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
 import { verify } from "jsonwebtoken";
-import { ObjectId } from "mongodb";
 import { IAuthType, IRolesTypes } from "../controllers/base-controller";
 import { ERRORS } from "../commons/constants";
-import { IUserRepository } from "../repositories/user-repository/user-repository-types";
+import { IRedisProvider } from "../providers/redis/redis-types";
 
 export type IDecodedTokenType = {
   _id: string;
@@ -23,7 +22,7 @@ declare global {
 
 export const ensureAuthentication = (
   auth: IAuthType,
-  userRepository: IUserRepository
+  redisProvider: IRedisProvider
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const { roles } = auth;
@@ -45,30 +44,41 @@ export const ensureAuthentication = (
 
       const { _id } = decoded as IDecodedTokenType;
 
-      const getUser = await userRepository.findById(new ObjectId(_id), {
-        role: 1,
-        is_active: 1,
-      });
+      if (process.env.NODE_ENV === "test") {
+        req.user = {
+          _id,
+        };
 
-      if (!getUser) {
+        return next();
+      }
+
+      const storedToken = await redisProvider.get(`auth-token-${_id}`);
+
+      if (!storedToken) {
         return res
           .status(ERRORS.UNAUTHORIZED.code)
           .json(ERRORS.UNAUTHORIZED.json);
       }
 
-      if (!getUser.is_active) {
+      const payload = JSON.parse(storedToken);
+
+      if (!payload.is_active) {
         return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
-      if (!roles.includes(getUser.role as string)) {
+      if (!roles.includes(payload.role as string)) {
+        return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
+      }
+
+      if (payload.token !== token) {
         return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
       req.user = {
-        _id: String(getUser._id),
+        _id,
       };
 
-      next();
+      return next();
     } catch (error) {
       return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
     }

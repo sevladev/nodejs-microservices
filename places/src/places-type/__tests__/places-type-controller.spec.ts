@@ -19,7 +19,7 @@ describe('places-type-controller', () => {
       .overrideProvider(PrismaService)
       .useValue({
         placeType: {
-          findUnique: jest.fn(),
+          findFirst: jest.fn(),
           create: jest.fn(),
         },
       })

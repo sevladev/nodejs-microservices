@@ -5,6 +5,10 @@ import { IUserTokenRepository } from "./user-token-repository-types";
 const users_tokens: UserTokenEntity[] = [];
 
 export class UserTokenRepositoryInMemory implements IUserTokenRepository {
+  async findById(_id: ObjectId): Promise<UserTokenEntity | undefined | null> {
+    return users_tokens.find((f) => f._id.equals(_id));
+  }
+
   async createOrUpdate(payload: UserTokenEntity): Promise<void> {
     const findIndex = users_tokens.findIndex((f) =>
       f.user_id.equals(payload.user_id)

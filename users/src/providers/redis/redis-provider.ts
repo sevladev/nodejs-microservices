@@ -21,4 +21,9 @@ export class RedisProvider implements IRedisProvider {
       await this.client.set(key, value);
     }
   }
+
+  async get(key: string): Promise<string> {
+    const result = await this.client.get(key);
+    return String(result);
+  }
 }

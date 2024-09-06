@@ -6,7 +6,6 @@ import { jwtConfig } from "../config/jwt";
 import { IUserTokenRepository } from "../repositories/user-token-repository/user-token-repository-types";
 import { UserTokenEntity } from "../entities/user-token-entity";
 import moment from "moment";
-import { RedisProvider } from "../providers/redis/redis-provider";
 import { IRedisProvider } from "../providers/redis/redis-types";
 
 interface Request {
@@ -50,7 +49,11 @@ export class CreateSessionCommand extends BaseCommand {
 
       await this.userTokenRepository.createOrUpdate(refresh_token);
 
-      await this.redisProvider.set(`auth-token-${user._id}`, token, 3600);
+      await this.redisProvider.set(
+        `auth-token-${user._id}`,
+        JSON.stringify({ token, role: user.role, is_active: user.is_active }),
+        3600
+      );
 
       return {
         token,

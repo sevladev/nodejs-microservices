@@ -38,6 +38,7 @@ describe("refresh-token-command", () => {
     redisProvider = new RedisProvider();
     refreshTokenCommand = new RefreshTokenCommand(
       userTokenRepository,
+      userRepository,
       redisProvider
     );
     createUserCommand = new CreateUserCommand(
@@ -56,26 +57,10 @@ describe("refresh-token-command", () => {
 
     const result = await refreshTokenCommand.execute({
       refresh_token: String(getToken?._id),
-      requester_id: String(getUser._id),
     });
 
     expect(result).toHaveProperty("token");
     expect(result).toHaveProperty("refresh_token");
-  });
-
-  it("it should be not able receive a new token if user not exists", async () => {
-    await createUserCommand.execute(user);
-    const getUser = (await userRepository.findByEmail(
-      user.email
-    )) as UserEntity;
-    const getToken = await userTokenRepository.findByUserId(getUser?._id);
-
-    const result = await refreshTokenCommand.execute({
-      refresh_token: String(getToken?._id),
-      requester_id: new ObjectId().toString(),
-    });
-
-    expect(result).toBe(false);
   });
 
   it("it should be not able receive a new token if refresh token is too old", async () => {
@@ -93,37 +78,14 @@ describe("refresh-token-command", () => {
 
     const result = await refreshTokenCommand.execute({
       refresh_token: String(getToken?._id),
-      requester_id: getUser._id.toString(),
     });
 
     expect(result).toBe(false);
   });
 
-  it("it should be not able receive a new token if happens mismatch between requester_id and refresh_token", async () => {
-    await createUserCommand.execute({
-      email: "test3@example.com",
-      password: "password123",
-      phone: "123456789",
-      name: "Test User",
-    });
-    await createUserCommand.execute({
-      email: "test2@example.com",
-      password: "password123",
-      phone: "123456789",
-      name: "Test User",
-    });
-
-    const getUser = (await userRepository.findByEmail(
-      "test3@example.com"
-    )) as UserEntity;
-    const getSecondUser = (await userRepository.findByEmail(
-      "test2@example.com"
-    )) as UserEntity;
-    const getToken = await userTokenRepository.findByUserId(getUser?._id);
-
+  it("it should be not able receive a new token if refresh_token nonexists", async () => {
     const result = await refreshTokenCommand.execute({
-      refresh_token: String(getToken?._id),
-      requester_id: String(getSecondUser._id),
+      refresh_token: String(new ObjectId()),
     });
 
     expect(result).toBe(false);

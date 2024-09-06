@@ -6,26 +6,28 @@ import moment from "moment";
 import { ObjectId } from "mongodb";
 import { sign } from "jsonwebtoken";
 import { IRedisProvider } from "../providers/redis/redis-types";
+import { IUserRepository } from "../repositories/user-repository/user-repository-types";
 
 interface Request {
   refresh_token: string;
-  requester_id: string;
 }
 
 export class RefreshTokenCommand extends BaseCommand {
   constructor(
     private userTokenRepository: IUserTokenRepository,
+    private userRepository: IUserRepository,
     private redisProvider: IRedisProvider
   ) {
     super();
   }
 
-  async execute({ refresh_token, requester_id }: Request) {
+  async execute({ refresh_token }: Request) {
     try {
-      const user_id = new ObjectId(requester_id);
       const old_refresh_token = new ObjectId(refresh_token);
 
-      const getToken = await this.userTokenRepository.findByUserId(user_id);
+      const getToken = await this.userTokenRepository.findById(
+        old_refresh_token
+      );
 
       if (!getToken) {
         return this.addError("refresh token not found");
@@ -54,9 +56,15 @@ export class RefreshTokenCommand extends BaseCommand {
 
       await this.userTokenRepository.createOrUpdate(new_refresh_token);
 
+      const user = await this.userRepository.findById(getToken.user_id);
+
       await this.redisProvider.set(
-        `auth-token-${requester_id}`,
-        new_token,
+        `auth-token-${getToken.user_id}`,
+        JSON.stringify({
+          token: new_token,
+          role: user?.role,
+          is_active: user?.is_active,
+        }),
         3600
       );
 

@@ -9,6 +9,10 @@ export interface IUserTokenRepository {
     user_id: ObjectId,
     projection?: ProjectionType<UserTokenEntity>
   ): Promise<UserTokenEntity | undefined | null>;
+  findById(
+    _id: ObjectId,
+    projection?: ProjectionType<UserTokenEntity>
+  ): Promise<UserTokenEntity | undefined | null>;
   deleteToken(refresh_token: ObjectId): Promise<void>;
   updateExpiresToken(refresh_token: ObjectId, tstamp: number): Promise<void>;
 }

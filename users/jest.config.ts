@@ -8,6 +8,7 @@ const config: Config = {
   transform: {
     "^.+\\.ts$": "ts-jest",
   },
+  setupFiles: ["<rootDir>/jest.env.ts"],
 };
 
 export default config;

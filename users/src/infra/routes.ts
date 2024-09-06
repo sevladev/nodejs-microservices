@@ -32,6 +32,7 @@ export class UserRoutes {
     const { handle: userGetMe } = new UserGetMeController(userRepository);
     const { handle: refreshToken } = new RefreshTokenController(
       userTokenRepository,
+      userRepository,
       redisProvider
     );
 
@@ -43,13 +44,12 @@ export class UserRoutes {
     );
     router.get(
       "/me",
-      ensureAuthentication(userGetMe.auth, userRepository),
+      ensureAuthentication(userGetMe.auth, redisProvider),
       userGetMe.fn
     );
     router.post(
       "/refresh-token/:refresh_token",
       schemaValidator(refreshToken.schema),
-      ensureAuthentication(refreshToken.auth, userRepository),
       refreshToken.fn
     );
 
