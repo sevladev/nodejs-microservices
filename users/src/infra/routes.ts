@@ -8,6 +8,7 @@ import { getUserTokenRepositories } from "../repositories/user-token-repository/
 import { UserGetMeController } from "../controllers/user-get-me-controller";
 import { ensureAuthentication } from "../middlewares/bearer-auth";
 import { RefreshTokenController } from "../controllers/refresh-token-controller";
+import { RedisProvider } from "../providers/redis/redis-provider";
 
 export class UserRoutes {
   static setup(app: Application, db: Db) {
@@ -16,13 +17,16 @@ export class UserRoutes {
     const userRepository = getUserRepositories(db);
     const userTokenRepository = getUserTokenRepositories(db);
 
+    const redisProvider = new RedisProvider();
+
     const { handle: createUser } = new CreateUserController(
       userRepository,
       userTokenRepository
     );
     const { handle: createSession } = new CreateSessionController(
       userRepository,
-      userTokenRepository
+      userTokenRepository,
+      redisProvider
     );
     const { handle: userGetMe } = new UserGetMeController(userRepository);
     const { handle: refreshToken } = new RefreshTokenController(

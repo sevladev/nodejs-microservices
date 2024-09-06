@@ -7,6 +7,7 @@ import { IUserTokenRepository } from "../repositories/user-token-repository/user
 import { UserTokenEntity } from "../entities/user-token-entity";
 import moment from "moment";
 import { RedisProvider } from "../providers/redis/redis-provider";
+import { IRedisProvider } from "../providers/redis/redis-types";
 
 interface Request {
   email: string;
@@ -14,15 +15,12 @@ interface Request {
 }
 
 export class CreateSessionCommand extends BaseCommand {
-  redisProvider: IRedisProvider;
-
   constructor(
     private userRepository: IUserRepository,
-    private userTokenRepository: IUserTokenRepository
+    private userTokenRepository: IUserTokenRepository,
+    private redisProvider: IRedisProvider
   ) {
     super();
-
-    this.redisProvider = new RedisProvider();
   }
 
   async execute({ email, password }: Request) {
