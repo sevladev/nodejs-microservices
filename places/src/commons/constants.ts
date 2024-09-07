@@ -42,3 +42,16 @@ export const ERRORS = {
     },
   },
 };
+
+export const safeJsonParse = (jsonString: string): any | undefined => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    return undefined;
+  }
+};
+
+export const ROLES_TYPES = {
+  USER: 'resu',
+  ROOT: 'toor',
+};

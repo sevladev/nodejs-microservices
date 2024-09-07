@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '../providers/redis/redis.service';
 import { ERRORS } from '../commons/constants';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -51,8 +52,11 @@ export class AuthMiddleware implements NestMiddleware {
         return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
       }
 
+      res.locals.user = storedToken;
+
       return next();
     } catch (error) {
+      console.log(error);
       return res.status(ERRORS.FORBIDDEN.code).json(ERRORS.FORBIDDEN.json);
     }
   }
