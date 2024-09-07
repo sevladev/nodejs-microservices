@@ -22,7 +22,7 @@ export class PlacesLocationService {
         return new CustomResponse()
           .status(400)
           .r(false)
-          .error('Ab place already registered in this location')
+          .error('An place already registered in this location')
           .build();
       }
 
@@ -65,7 +65,7 @@ export class PlacesLocationService {
       await this.placesLocationRepository.create(placeLocation);
 
       return new CustomResponse()
-        .status(200)
+        .status(201)
         .r(true)
         .result(placeLocation)
         .build();
