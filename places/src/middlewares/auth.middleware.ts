@@ -1,12 +1,7 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { RedisService } from '../redis/redis.service';
-import { CustomError } from '../errors/custom-error';
+import { RedisService } from '../providers/redis/redis.service';
 import { ERRORS } from '../commons/constants';
 
 @Injectable()

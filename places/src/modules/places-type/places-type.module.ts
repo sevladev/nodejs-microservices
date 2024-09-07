@@ -2,10 +2,10 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { PlacesTypeService } from './places-type.service';
 import { PlacesTypeRepository } from './places-type-repository';
 import { PlacesTypeController } from './places-type.controller';
-import { PrismaModule } from '../prisma/prisma.module';
-import { RedisModule } from '../redis/redis.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { PrismaModule } from '../../providers/prisma/prisma.module';
+import { AuthMiddleware } from '../../middlewares/auth.middleware';
+import { RedisModule } from '../../providers/redis/redis.module';
 
 @Module({
   imports: [PrismaModule, RedisModule, JwtModule.register({})],

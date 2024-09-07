@@ -3,7 +3,7 @@ import { PlacesTypeService } from './places-type.service';
 import { createPlacesTypeSchema } from './dtos/create-places-type';
 import { z } from 'zod';
 import { Response } from 'express';
-import { ZodValidationPipe } from '../middlewares/schema.middleware';
+import { ZodValidationPipe } from '../../middlewares/schema.middleware';
 
 @Controller('/places/places-type')
 export class PlacesTypeController {

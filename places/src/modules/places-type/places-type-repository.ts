@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { IPlacesTypeRepository } from './dtos/places-type-repository';
 import { PlacesTypeEntity } from './places-type.entity';
+import { PrismaService } from '../../providers/prisma/prisma.service';
 
 @Injectable()
 export class PlacesTypeRepository implements IPlacesTypeRepository {

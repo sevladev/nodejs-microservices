@@ -1,4 +1,4 @@
-import { BaseEntity } from '../commons/base-entity';
+import { BaseEntity } from '../../commons/base-entity';
 
 export class PlacesTypeEntity extends BaseEntity {
   name: string;

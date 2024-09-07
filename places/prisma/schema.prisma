@@ -30,5 +30,25 @@ model PlacesType {
   created_at Int
   updated_at Int
 
+  @@unique([slug])
   @@index([slug])
+}
+
+model PlacesLocation {
+  id            String @id @default(uuid())
+  city          String
+  state         String
+  country       String
+  zip_code      String
+  neighbourhood String
+  latitude      Float
+  longitude     Float
+  place_id      String
+  created_at    Int
+  updated_at    Int
+
+  @@unique([place_id])
+  @@unique([latitude, longitude])
+  @@index([place_id])
+  @@index([latitude, longitude])
 }
